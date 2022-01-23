@@ -20,6 +20,10 @@ public class CommonUtils {
                 int bt = 0;
                 File file = new File(sdCardPath + File.separator
                         + assetsDirName.substring(assetsDirName.lastIndexOf('/')));
+                if(!file.getParentFile().exists()) {
+//                    Log.d(TAG, "file.getParentFile():" + file.getParentFile());
+//                    file.getParentFile().mkdirs();
+                }
                 if (!file.exists()) {
                     file.createNewFile();
                 } else {
