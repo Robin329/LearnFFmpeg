@@ -12,6 +12,7 @@
 #include "../../util/LogUtil.h"
 
 void DecoderBase::Start() {
+    LOGCATE("robin1 DecoderBase::Start");
     if(m_Thread == nullptr) {
         StartDecodingThread();
     } else {
@@ -22,19 +23,20 @@ void DecoderBase::Start() {
 }
 
 void DecoderBase::Pause() {
+    LOGCATE("robin1 DecoderBase::Pause");
     std::unique_lock<std::mutex> lock(m_Mutex);
     m_DecoderState = STATE_PAUSE;
 }
 
 void DecoderBase::Stop() {
-    LOGCATE("DecoderBase::Stop");
+    LOGCATE("robin1 DecoderBase::Stop");
     std::unique_lock<std::mutex> lock(m_Mutex);
     m_DecoderState = STATE_STOP;
     m_Cond.notify_all();
 }
 
 void DecoderBase::SeekToPosition(float position) {
-    LOGCATE("DecoderBase::SeekToPosition position=%f", position);
+    LOGCATE("robin1 DecoderBase::SeekToPosition position=%f", position);
     std::unique_lock<std::mutex> lock(m_Mutex);
     m_SeekPosition = position;
     m_DecoderState = STATE_DECODING;
@@ -48,21 +50,21 @@ float DecoderBase::GetCurrentPosition() {
 }
 
 int DecoderBase::Init(const char *url, AVMediaType mediaType) {
-    LOGCATE("DecoderBase::Init url=%s, mediaType=%d", url, mediaType);
+    LOGCATE("robin1 DecoderBase::Init url=%s, mediaType=%d", url, mediaType);
     strcpy(m_Url,url);
     m_MediaType = mediaType;
     return 0;
 }
 
 void DecoderBase::UnInit() {
-    LOGCATE("DecoderBase::UnInit m_MediaType=%d", m_MediaType);
+    LOGCATE("robin1 DecoderBase::UnInit m_MediaType=%d", m_MediaType);
     if(m_Thread) {
         Stop();
         m_Thread->join();
         delete m_Thread;
         m_Thread = nullptr;
     }
-    LOGCATE("DecoderBase::UnInit end, m_MediaType=%d", m_MediaType);
+    LOGCATE("robin1 DecoderBase::UnInit end, m_MediaType=%d", m_MediaType);
 }
 
 int DecoderBase::InitFFDecoder() {
@@ -72,15 +74,16 @@ int DecoderBase::InitFFDecoder() {
         m_AVFormatContext = avformat_alloc_context();
 
         //2.打开文件
-        if(avformat_open_input(&m_AVFormatContext, m_Url, NULL, NULL) != 0)
+        int ret = avformat_open_input(&m_AVFormatContext, m_Url, NULL, NULL);
+        if(ret != 0)
         {
-            LOGCATE("DecoderBase::InitFFDecoder avformat_open_input fail.");
+            LOGCATE("robin1 DecoderBase::InitFFDecoder avformat_open_input fail, ret = %d.", ret);
             break;
         }
 
         //3.获取音视频流信息
         if(avformat_find_stream_info(m_AVFormatContext, NULL) < 0) {
-            LOGCATE("DecoderBase::InitFFDecoder avformat_find_stream_info fail.");
+            LOGCATE("robin1 DecoderBase::InitFFDecoder avformat_find_stream_info fail.");
             break;
         }
 
@@ -93,7 +96,7 @@ int DecoderBase::InitFFDecoder() {
         }
 
         if(m_StreamIndex == -1) {
-            LOGCATE("DecoderBase::InitFFDecoder Fail to find stream index.");
+            LOGCATE("robin1 DecoderBase::InitFFDecoder Fail to find stream index.");
             break;
         }
         //5.获取解码器参数
@@ -102,14 +105,14 @@ int DecoderBase::InitFFDecoder() {
         //6.获取解码器
         m_AVCodec = avcodec_find_decoder(codecParameters->codec_id);
         if(m_AVCodec == nullptr) {
-            LOGCATE("DecoderBase::InitFFDecoder avcodec_find_decoder fail.");
+            LOGCATE("robin1 DecoderBase::InitFFDecoder avcodec_find_decoder fail.");
             break;
         }
 
         //7.创建解码器上下文
         m_AVCodecContext = avcodec_alloc_context3(m_AVCodec);
         if(avcodec_parameters_to_context(m_AVCodecContext, codecParameters) != 0) {
-            LOGCATE("DecoderBase::InitFFDecoder avcodec_parameters_to_context fail.");
+            LOGCATE("robin1 DecoderBase::InitFFDecoder avcodec_parameters_to_context fail.");
             break;
         }
 
@@ -122,7 +125,7 @@ int DecoderBase::InitFFDecoder() {
         //8.打开解码器
         result = avcodec_open2(m_AVCodecContext, m_AVCodec, &pAVDictionary);
         if(result < 0) {
-            LOGCATE("DecoderBase::InitFFDecoder avcodec_open2 fail. result=%d", result);
+            LOGCATE("robin1 DecoderBase::InitFFDecoder avcodec_open2 fail. result=%d", result);
             break;
         }
         result = 0;
@@ -141,7 +144,7 @@ int DecoderBase::InitFFDecoder() {
 }
 
 void DecoderBase::UnInitDecoder() {
-    LOGCATE("DecoderBase::UnInitDecoder");
+    LOGCATE("robin1 DecoderBase::UnInitDecoder");
     if(m_Frame != nullptr) {
         av_frame_free(&m_Frame);
         m_Frame = nullptr;
@@ -172,7 +175,7 @@ void DecoderBase::StartDecodingThread() {
 }
 
 void DecoderBase::DecodingLoop() {
-    LOGCATE("DecoderBase::DecodingLoop start, m_MediaType=%d", m_MediaType);
+    LOGCATE("robin1 DecoderBase::DecodingLoop start, m_MediaType=%d", m_MediaType);
     {
         std::unique_lock<std::mutex> lock(m_Mutex);
         m_DecoderState = STATE_DECODING;
@@ -182,7 +185,7 @@ void DecoderBase::DecodingLoop() {
     for(;;) {
         while (m_DecoderState == STATE_PAUSE) {
             std::unique_lock<std::mutex> lock(m_Mutex);
-            LOGCATE("DecoderBase::DecodingLoop waiting, m_MediaType=%d", m_MediaType);
+            LOGCATE("robin1 DecoderBase::DecodingLoop waiting, m_MediaType=%d", m_MediaType);
             m_Cond.wait_for(lock, std::chrono::milliseconds(10));
             m_StartTimeStamp = GetSysCurrentTime() - m_CurTimeStamp;
         }
@@ -200,11 +203,11 @@ void DecoderBase::DecodingLoop() {
             m_DecoderState = STATE_PAUSE;
         }
     }
-    LOGCATE("DecoderBase::DecodingLoop end");
+    LOGCATE("robin1 DecoderBase::DecodingLoop end");
 }
 
 void DecoderBase::UpdateTimeStamp() {
-    LOGCATE("DecoderBase::UpdateTimeStamp");
+    LOGCATE("robin1 DecoderBase::UpdateTimeStamp");
     std::unique_lock<std::mutex> lock(m_Mutex);
     if(m_Frame->pkt_dts != AV_NOPTS_VALUE) {
         m_CurTimeStamp = m_Frame->pkt_dts;
@@ -225,7 +228,7 @@ void DecoderBase::UpdateTimeStamp() {
 }
 
 long DecoderBase::AVSync() {
-    LOGCATE("DecoderBase::AVSync");
+    LOGCATE("robin1 DecoderBase::AVSync");
     long curSysTime = GetSysCurrentTime();
     //基于系统时钟计算从开始播放流逝的时间
     long elapsedTime = curSysTime - m_StartTimeStamp;
@@ -249,7 +252,7 @@ long DecoderBase::AVSync() {
 }
 
 int DecoderBase::DecodeOnePacket() {
-    LOGCATE("DecoderBase::DecodeOnePacket m_MediaType=%d", m_MediaType);
+    LOGCATE("robin1 DecoderBase::DecodeOnePacket m_MediaType=%d", m_MediaType);
     if(m_SeekPosition > 0) {
         //seek to frame
         int64_t seek_target = static_cast<int64_t>(m_SeekPosition * 1000000);//微秒
@@ -258,14 +261,14 @@ int DecoderBase::DecodeOnePacket() {
         int seek_ret = avformat_seek_file(m_AVFormatContext, -1, seek_min, seek_target, seek_max, 0);
         if (seek_ret < 0) {
             m_SeekSuccess = false;
-            LOGCATE("BaseDecoder::DecodeOneFrame error while seeking m_MediaType=%d", m_MediaType);
+            LOGCATE("robin1 BaseDecoder::DecodeOneFrame error while seeking m_MediaType=%d", m_MediaType);
         } else {
             if (-1 != m_StreamIndex) {
                 avcodec_flush_buffers(m_AVCodecContext);
             }
             ClearCache();
             m_SeekSuccess = true;
-            LOGCATE("BaseDecoder::DecodeOneFrame seekFrame pos=%f, m_MediaType=%d", m_SeekPosition, m_MediaType);
+            LOGCATE("robin1 BaseDecoder::DecodeOneFrame seekFrame pos=%f, m_MediaType=%d", m_SeekPosition, m_MediaType);
         }
     }
     int result = av_read_frame(m_AVFormatContext, m_Packet);
@@ -292,12 +295,12 @@ int DecoderBase::DecodeOnePacket() {
                 //同步
                 AVSync();
                 //渲染
-                LOGCATE("DecoderBase::DecodeOnePacket 000 m_MediaType=%d", m_MediaType);
+                LOGCATE("robin1 DecoderBase::DecodeOnePacket 000 m_MediaType=%d", m_MediaType);
                 OnFrameAvailable(m_Frame);
-                LOGCATE("DecoderBase::DecodeOnePacket 0001 m_MediaType=%d", m_MediaType);
+                LOGCATE("robin1 DecoderBase::DecodeOnePacket 0001 m_MediaType=%d", m_MediaType);
                 frameCount ++;
             }
-            LOGCATE("BaseDecoder::DecodeOneFrame frameCount=%d", frameCount);
+            LOGCATE("robin1 BaseDecoder::DecodeOneFrame frameCount=%d", frameCount);
             //判断一个 packet 是否解码完成
             if(frameCount > 0) {
                 result = 0;
@@ -314,7 +317,7 @@ __EXIT:
 }
 
 void DecoderBase::DoAVDecoding(DecoderBase *decoder) {
-    LOGCATE("DecoderBase::DoAVDecoding");
+    LOGCATE("robin1 DecoderBase::DoAVDecoding");
     do {
         if(decoder->InitFFDecoder() != 0) {
             break;

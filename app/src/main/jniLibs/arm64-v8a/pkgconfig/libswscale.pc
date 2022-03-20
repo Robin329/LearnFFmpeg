@@ -1,0 +1,14 @@
+prefix=/Users/renbinjiang/workspace/project/ffmpeg/android/armv8-a
+exec_prefix=${prefix}
+libdir=/Users/renbinjiang/workspace/project/ffmpeg/android/armv8-a/lib
+includedir=/Users/renbinjiang/workspace/project/ffmpeg/android/armv8-a/include
+
+Name: libswscale
+Description: FFmpeg image rescaling library
+Version: 5.10.100
+Requires: 
+Requires.private: libavutil >= 56.72.100
+Conflicts:
+Libs: -L${libdir}  -lswscale 
+Libs.private: -lm
+Cflags: -I${includedir}

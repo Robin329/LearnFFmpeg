@@ -494,7 +494,8 @@ public class VideoRecorderActivity extends AppCompatActivity implements Camera2F
     }
 
     public static final File getOutFile(final String ext) {
-        final File dir = new File(Environment.getExternalStorageDirectory(), RESULT_IMG_DIR);
+//        final File dir = new File(Environment.getExternalStorageDirectory(), RESULT_IMG_DIR);
+        final File dir = new File("/data/", RESULT_IMG_DIR);
         Log.d(TAG, "path=" + dir.toString());
         dir.mkdirs();
         if (dir.canWrite()) {

@@ -19,6 +19,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -75,10 +76,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        Log.d(TAG, "onResume: ");
         super.onResume();
         mSampleSelectedIndex = -1;
-        CommonUtils.copyAssetsDirToSDCard(this, "byteflow", "/sdcard");
+        CommonUtils.copyAssetsDirToSDCard(this, "byteflow", "/data");
         if (!hasPermissionsGranted(REQUEST_PERMISSIONS)) {
+            Log.d(TAG, "onResume: not have Permission!");
             ActivityCompat.requestPermissions(this, REQUEST_PERMISSIONS, PERMISSION_REQUEST_CODE);
         }
     }
@@ -139,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
                 myPreviewSizeViewAdapter.safeNotifyItemChanged(selectIndex);
                 myPreviewSizeViewAdapter.safeNotifyItemChanged(position);
                 mSampleSelectedIndex = position;
+                Log.d(TAG, "robin selectIndex:" + selectIndex + " mSampleSelectedIndex:" + mSampleSelectedIndex);
                 switch (position) {
                     case FF_ANATIVE_WINDOWS_EXAMPLE:
                         startActivity(new Intent(MainActivity.this, NativeMediaPlayerActivity.class));

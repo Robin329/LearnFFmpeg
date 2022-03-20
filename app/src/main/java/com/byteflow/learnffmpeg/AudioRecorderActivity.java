@@ -1,10 +1,8 @@
 /**
- *
  * Created by 公众号：字节流动 on 2021/3/16.
  * https://github.com/githubhaohao/LearnFFmpeg
  * 最新文章首发于公众号：字节流动，有疑问或者技术交流可以添加微信 Byte-Flow ,领取视频教程, 拉你进技术交流群
- *
- * */
+ */
 
 package com.byteflow.learnffmpeg;
 
@@ -176,12 +174,12 @@ public class AudioRecorderActivity extends AppCompatActivity implements AudioRec
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 File file = new File(mOutUrl);
                 Uri uri = null;
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
-                    uri = FileProvider.getUriForFile(AudioRecorderActivity.this,"com.byteflow.learnffmpeg.fileprovider", file);
-                }else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    uri = FileProvider.getUriForFile(AudioRecorderActivity.this, "com.byteflow.learnffmpeg.fileprovider", file);
+                } else {
                     uri = Uri.fromFile(file);
                 }
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 intent.setDataAndType(uri, "audio/*");
                 startActivity(intent);
@@ -209,7 +207,8 @@ public class AudioRecorderActivity extends AppCompatActivity implements AudioRec
     }
 
     public static final File getOutFile(final String ext) {
-        final File dir = new File(Environment.getExternalStorageDirectory(), RESULT_IMG_DIR);
+//        final File dir = new File(Environment.getExternalStorageDirectory(), RESULT_IMG_DIR);
+        final File dir = new File("/data/", RESULT_IMG_DIR);
         Log.d(TAG, "path=" + dir.toString());
         dir.mkdirs();
         if (dir.canWrite()) {

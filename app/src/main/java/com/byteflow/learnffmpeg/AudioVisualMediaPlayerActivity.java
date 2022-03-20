@@ -1,10 +1,8 @@
 /**
- *
  * Created by 公众号：字节流动 on 2021/3/16.
  * https://github.com/githubhaohao/LearnFFmpeg
  * 最新文章首发于公众号：字节流动，有疑问或者技术交流可以添加微信 Byte-Flow ,领取视频教程, 拉你进技术交流群
- *
- * */
+ */
 
 package com.byteflow.learnffmpeg;
 
@@ -40,7 +38,7 @@ import static com.byteflow.learnffmpeg.media.FFMediaPlayer.MSG_REQUEST_RENDER;
 import static com.byteflow.learnffmpeg.media.FFMediaPlayer.VIDEO_GL_RENDER;
 import static com.byteflow.learnffmpeg.media.FFMediaPlayer.VIDEO_RENDER_OPENGL;
 
-public class AudioVisualMediaPlayerActivity extends AppCompatActivity implements GLSurfaceView.Renderer, FFMediaPlayer.EventCallback{
+public class AudioVisualMediaPlayerActivity extends AppCompatActivity implements GLSurfaceView.Renderer, FFMediaPlayer.EventCallback {
     private static final String TAG = "MediaPlayerActivity";
     private static final String[] REQUEST_PERMISSIONS = {
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -51,8 +49,8 @@ public class AudioVisualMediaPlayerActivity extends AppCompatActivity implements
     private FFMediaPlayer mMediaPlayer = null;
     private SeekBar mSeekBar = null;
     private boolean mIsTouch = false;
-    private String mVideoPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/byteflow/midway.mp4";
-
+    //    private String mVideoPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/byteflow/midway.mp4";
+    private String mVideoPath = "/data" + "/byteflow/midway.mp4";
     private GLSurfaceView.Renderer mAudioGLRender = new GLSurfaceView.Renderer() {
         @Override
         public void onSurfaceCreated(GL10 gl10, EGLConfig eglConfig) {
@@ -102,7 +100,7 @@ public class AudioVisualMediaPlayerActivity extends AppCompatActivity implements
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 Log.d(TAG, "onStopTrackingTouch() called with: progress = [" + seekBar.getProgress() + "]");
-                if(mMediaPlayer != null) {
+                if (mMediaPlayer != null) {
                     mMediaPlayer.seekToPosition(mSeekBar.getProgress());
                     mIsTouch = false;
                 }
@@ -121,7 +119,7 @@ public class AudioVisualMediaPlayerActivity extends AppCompatActivity implements
         if (!hasPermissionsGranted(REQUEST_PERMISSIONS)) {
             ActivityCompat.requestPermissions(this, REQUEST_PERMISSIONS, PERMISSION_REQUEST_CODE);
         } else {
-            if(mMediaPlayer != null)
+            if (mMediaPlayer != null)
                 mMediaPlayer.play();
         }
 
@@ -141,14 +139,14 @@ public class AudioVisualMediaPlayerActivity extends AppCompatActivity implements
     @Override
     protected void onPause() {
         super.onPause();
-        if(mMediaPlayer != null)
+        if (mMediaPlayer != null)
             mMediaPlayer.pause();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(mMediaPlayer != null)
+        if (mMediaPlayer != null)
             mMediaPlayer.unInit();
     }
 
@@ -187,7 +185,7 @@ public class AudioVisualMediaPlayerActivity extends AppCompatActivity implements
                         mAudioGLSurfaceView.requestRender();
                         break;
                     case MSG_DECODING_TIME:
-                        if(!mIsTouch)
+                        if (!mIsTouch)
                             mSeekBar.setProgress((int) msgValue);
                         break;
                     default:
@@ -201,7 +199,7 @@ public class AudioVisualMediaPlayerActivity extends AppCompatActivity implements
     private void onDecoderReady() {
         int videoWidth = (int) mMediaPlayer.getMediaParams(MEDIA_PARAM_VIDEO_WIDTH);
         int videoHeight = (int) mMediaPlayer.getMediaParams(MEDIA_PARAM_VIDEO_HEIGHT);
-        if(videoHeight * videoWidth != 0)
+        if (videoHeight * videoWidth != 0)
             mVideoGLSurfaceView.setAspectRatio(videoWidth, videoHeight);
 
         int duration = (int) mMediaPlayer.getMediaParams(MEDIA_PARAM_VIDEO_DURATION);

@@ -1,10 +1,8 @@
 /**
- *
  * Created by 公众号：字节流动 on 2021/3/16.
  * https://github.com/githubhaohao/LearnFFmpeg
  * 最新文章首发于公众号：字节流动，有疑问或者技术交流可以添加微信 Byte-Flow ,领取视频教程, 拉你进技术交流群
- *
- * */
+ */
 
 package com.byteflow.learnffmpeg;
 
@@ -57,7 +55,9 @@ public class VRMediaPlayerActivity extends AppCompatActivity implements GLSurfac
     private SeekBar mSeekBar = null;
     private boolean mIsTouch = false;
     private SensorManager mSensorManager;
-    private String mVideoPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/byteflow/vr.mp4";
+    //    private String mVideoPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/byteflow/vr.mp4";
+    private String mVideoPath = "/data" + "/byteflow/vr.mp4";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,7 +83,7 @@ public class VRMediaPlayerActivity extends AppCompatActivity implements GLSurfac
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 Log.d(TAG, "onStopTrackingTouch() called with: progress = [" + seekBar.getProgress() + "]");
-                if(mMediaPlayer != null) {
+                if (mMediaPlayer != null) {
                     mMediaPlayer.seekToPosition(mSeekBar.getProgress());
                     mIsTouch = false;
                 }
@@ -107,7 +107,7 @@ public class VRMediaPlayerActivity extends AppCompatActivity implements GLSurfac
         if (!hasPermissionsGranted(REQUEST_PERMISSIONS)) {
             ActivityCompat.requestPermissions(this, REQUEST_PERMISSIONS, PERMISSION_REQUEST_CODE);
         } else {
-            if(mMediaPlayer != null)
+            if (mMediaPlayer != null)
                 mMediaPlayer.play();
         }
         Toast.makeText(this, "拖动画面感受 3D 效果", Toast.LENGTH_SHORT).show();
@@ -121,7 +121,7 @@ public class VRMediaPlayerActivity extends AppCompatActivity implements GLSurfac
                 Toast.makeText(this, "We need the permission: WRITE_EXTERNAL_STORAGE", Toast.LENGTH_SHORT).show();
             } else {
                 //if(mMediaPlayer != null)
-                    //mMediaPlayer.play();
+                //mMediaPlayer.play();
             }
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -132,14 +132,14 @@ public class VRMediaPlayerActivity extends AppCompatActivity implements GLSurfac
     protected void onPause() {
         super.onPause();
         mSensorManager.unregisterListener(this);
-        if(mMediaPlayer != null)
+        if (mMediaPlayer != null)
             mMediaPlayer.pause();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(mMediaPlayer != null)
+        if (mMediaPlayer != null)
             mMediaPlayer.unInit();
     }
 
@@ -177,7 +177,7 @@ public class VRMediaPlayerActivity extends AppCompatActivity implements GLSurfac
                         mGLSurfaceView.requestRender();
                         break;
                     case MSG_DECODING_TIME:
-                        if(!mIsTouch)
+                        if (!mIsTouch)
                             mSeekBar.setProgress((int) msgValue);
                         break;
                     default:
@@ -191,7 +191,7 @@ public class VRMediaPlayerActivity extends AppCompatActivity implements GLSurfac
     private void onDecoderReady() {
         int videoWidth = (int) mMediaPlayer.getMediaParams(MEDIA_PARAM_VIDEO_WIDTH);
         int videoHeight = (int) mMediaPlayer.getMediaParams(MEDIA_PARAM_VIDEO_HEIGHT);
-        if(videoHeight * videoWidth != 0)
+        if (videoHeight * videoWidth != 0)
             mGLSurfaceView.setAspectRatio(videoWidth, videoHeight);
 
         int duration = (int) mMediaPlayer.getMediaParams(MEDIA_PARAM_VIDEO_DURATION);
@@ -213,7 +213,7 @@ public class VRMediaPlayerActivity extends AppCompatActivity implements GLSurfac
 
     @Override
     public void onGesture(int xRotateAngle, int yRotateAngle, float scale) {
-         FFMediaPlayer.native_SetGesture(VR_3D_GL_RENDER, xRotateAngle, yRotateAngle, scale);
+        FFMediaPlayer.native_SetGesture(VR_3D_GL_RENDER, xRotateAngle, yRotateAngle, scale);
     }
 
     @Override

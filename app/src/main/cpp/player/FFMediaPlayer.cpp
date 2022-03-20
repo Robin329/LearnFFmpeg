@@ -37,7 +37,7 @@ void FFMediaPlayer::Init(JNIEnv *jniEnv, jobject obj, char *url, int videoRender
 }
 
 void FFMediaPlayer::UnInit() {
-    LOGCATE("FFMediaPlayer::UnInit");
+    LOGCATE("robin1 FFMediaPlayer::UnInit");
     if(m_VideoDecoder) {
         delete m_VideoDecoder;
         m_VideoDecoder = nullptr;
@@ -68,7 +68,7 @@ void FFMediaPlayer::UnInit() {
 }
 
 void FFMediaPlayer::Play() {
-    LOGCATE("FFMediaPlayer::Play");
+    LOGCATE("robin1 FFMediaPlayer::Play");
     if(m_VideoDecoder)
         m_VideoDecoder->Start();
 
@@ -77,7 +77,7 @@ void FFMediaPlayer::Play() {
 }
 
 void FFMediaPlayer::Pause() {
-    LOGCATE("FFMediaPlayer::Pause");
+    LOGCATE("robin1 FFMediaPlayer::Pause");
     if(m_VideoDecoder)
         m_VideoDecoder->Pause();
 
@@ -87,7 +87,7 @@ void FFMediaPlayer::Pause() {
 }
 
 void FFMediaPlayer::Stop() {
-    LOGCATE("FFMediaPlayer::Stop");
+    LOGCATE("robin1 robin1 FFMediaPlayer::Stop");
     if(m_VideoDecoder)
         m_VideoDecoder->Stop();
 
@@ -96,7 +96,7 @@ void FFMediaPlayer::Stop() {
 }
 
 void FFMediaPlayer::SeekToPosition(float position) {
-    LOGCATE("FFMediaPlayer::SeekToPosition position=%f", position);
+    LOGCATE("robin1 robin1 FFMediaPlayer::SeekToPosition position=%f", position);
     if(m_VideoDecoder)
         m_VideoDecoder->SeekToPosition(position);
 
@@ -106,7 +106,7 @@ void FFMediaPlayer::SeekToPosition(float position) {
 }
 
 long FFMediaPlayer::GetMediaParams(int paramType) {
-    LOGCATE("FFMediaPlayer::GetMediaParams paramType=%d", paramType);
+    LOGCATE("robin1 robin1 FFMediaPlayer::GetMediaParams paramType=%d", paramType);
     long value = 0;
     switch(paramType)
     {
@@ -127,7 +127,7 @@ JNIEnv *FFMediaPlayer::GetJNIEnv(bool *isAttach) {
     JNIEnv *env;
     int status;
     if (nullptr == m_JavaVM) {
-        LOGCATE("FFMediaPlayer::GetJNIEnv m_JavaVM == nullptr");
+        LOGCATE("robin1 FFMediaPlayer::GetJNIEnv m_JavaVM == nullptr");
         return nullptr;
     }
     *isAttach = false;
@@ -135,7 +135,7 @@ JNIEnv *FFMediaPlayer::GetJNIEnv(bool *isAttach) {
     if (status != JNI_OK) {
         status = m_JavaVM->AttachCurrentThread(&env, nullptr);
         if (status != JNI_OK) {
-            LOGCATE("FFMediaPlayer::GetJNIEnv failed to attach current thread");
+            LOGCATE("robin1 FFMediaPlayer::GetJNIEnv failed to attach current thread");
             return nullptr;
         }
         *isAttach = true;
@@ -157,7 +157,7 @@ void FFMediaPlayer::PostMessage(void *context, int msgType, float msgCode) {
         FFMediaPlayer *player = static_cast<FFMediaPlayer *>(context);
         bool isAttach = false;
         JNIEnv *env = player->GetJNIEnv(&isAttach);
-        LOGCATE("FFMediaPlayer::PostMessage env=%p", env);
+        LOGCATE("robin1 FFMediaPlayer::PostMessage env=%p", env);
         if(env == nullptr)
             return;
         jobject javaObj = player->GetJavaObj();

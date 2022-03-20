@@ -3,9 +3,11 @@ package com.byteflow.learnffmpeg.media;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
+import android.util.Log;
 import android.view.Surface;
 
 public class FFMediaPlayer {
+    private static final String TAG = "FFMediaPlayer";
     //gl render type
     public static final int VIDEO_GL_RENDER = 0;
     public static final int AUDIO_GL_RENDER = 1;
@@ -99,10 +101,12 @@ public class FFMediaPlayer {
     }
 
     public void addEventCallback(EventCallback callback) {
+        Log.d(TAG, "robin1 addEventCallback");
         mEventCallback = callback;
     }
 
     public long getMediaParams(int paramType) {
+        Log.d(TAG, "robin1 getMediaParams paramType:" + paramType);
         return native_GetMediaParams(mNativePlayerHandle, paramType);
     }
 
